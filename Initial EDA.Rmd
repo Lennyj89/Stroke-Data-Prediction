@@ -1,0 +1,71 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+
+```{r}
+#Read in the dataset
+filePath <- "D:/MS-ADS-502-02-SP21-Data Mining/Stroke-Prediction/archive/healthcare-dataset-stroke-data.csv"
+strokeData <- read.csv(file=filePath)
+```
+
+```{r}
+#View the data
+summary(strokeData)
+
+#Need to change hypertension and heart_disease to Yes/No.
+#Only run this once as the ifelse statement will compute false each subsequent time
+#strokeData <- strokeData %>% mutate(hypertension = ifelse(hypertension == 0, "No", "Yes"))
+#strokeData <- strokeData %>% mutate(heart_disease = ifelse(heart_disease == 0, "No", "Yes"))
+
+#Need to convert BMI from character to numeric
+strokeData$bmi <- as.numeric(strokeData$bmi)
+
+#determine the number of missing values
+colSums(is.na(strokeData))
+
+#remove rows containing NA in bmi.  201 rows will be removed.  bmi is something easily calculated if weight and height are known.  Rather than guessing, removing the affected rows will be best since there are so few.
+strokeData <- na.omit(strokeData)
+```
+
+```{r}
+#CATEGROICAL DATA PLOTS
+#gender bar plot
+genderPlot <- ggplot(data = strokeData) + geom_bar(mapping = aes(x = gender))
+genderPlot
+
+#ever_married bar plot
+ever_marriedPlot <- ggplot(data = strokeData) + geom_bar(mapping = aes(x = ever_married))
+ever_marriedPlot
+
+#work_type bar plot
+work_typePlot <- ggplot(data = strokeData) + geom_bar(mapping = aes(x = work_type))
+work_typePlot
+
+#Residence_type bar plot
+Residence_typePlot <- ggplot(data = strokeData) + geom_bar(mapping = aes(x = Residence_type))
+Residence_typePlot
+
+#smoking_status bar plot
+smoking_statusPlot <- ggplot(data = strokeData) + geom_bar(mapping = aes(x = smoking_status))
+smoking_statusPlot
+
+#CONTINUOUS DATA PLOTS
+#age, avg_glucose_level, bmi
+#age plot
+agePlot <- ggplot(data = strokeData) + geom_histogram(mapping = aes(x = age), binwidth = 1)
+agePlot
+
+#avg_glucose_level plot
+avg_glucose_levelPlot <- ggplot(data = strokeData) + geom_histogram(mapping = aes(x = avg_glucose_level), binwidth = 5)
+avg_glucose_levelPlot
+
+#bmi plot
+bmiPlot <- ggplot(data = strokeData) + geom_histogram(mapping = aes(x = bmi), binwidth = 1)
+bmiPlot
+```
