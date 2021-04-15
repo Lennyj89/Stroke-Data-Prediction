@@ -5,12 +5,14 @@ output: html_notebook
 ```{r}
 library(ggplot2)
 library(dplyr)
+library(psych)
+library(corrplot)
 ```
 
 
 ```{r}
 #Read in the dataset
-filePath <- "D:/MS-ADS-502-02-SP21-Data Mining/Stroke-Prediction/archive/healthcare-dataset-stroke-data.csv"
+filePath <- "D:/MS-ADS-502-02-SP21-Data Mining/Final Project/healthcare-dataset-stroke-data.csv"
 strokeData <- read.csv(file=filePath)
 ```
 
@@ -18,10 +20,9 @@ strokeData <- read.csv(file=filePath)
 #View the data
 summary(strokeData)
 
-#Need to change hypertension and heart_disease to Yes/No.
+#Need to change ever married to 0/1.
 #Only run this once as the ifelse statement will compute false each subsequent time
-#strokeData <- strokeData %>% mutate(hypertension = ifelse(hypertension == 0, "No", "Yes"))
-#strokeData <- strokeData %>% mutate(heart_disease = ifelse(heart_disease == 0, "No", "Yes"))
+#strokeData <- strokeData %>% mutate(ever_married = ifelse(ever_married == "No", 0, 1))
 
 #Need to convert BMI from character to numeric
 strokeData$bmi <- as.numeric(strokeData$bmi)
@@ -31,6 +32,9 @@ colSums(is.na(strokeData))
 
 #remove rows containing NA in bmi.  201 rows will be removed.  bmi is something easily calculated if weight and height are known.  Rather than guessing, removing the affected rows will be best since there are so few.
 strokeData <- na.omit(strokeData)
+
+#View summary statistics
+describe(strokeData)
 ```
 
 ```{r}
@@ -38,6 +42,14 @@ strokeData <- na.omit(strokeData)
 #gender bar plot
 genderPlot <- ggplot(data = strokeData) + geom_bar(mapping = aes(x = gender))
 genderPlot
+
+#hypertension bar plot
+hypertensionPlot <- ggplot(data = strokeData) + geom_bar(mapping = aes(x = hypertension))
+hypertensionPlot
+
+#heart_disease bar plot
+heart_diseasePlot <- ggplot(data = strokeData) + geom_bar(mapping = aes(x = heart_disease))
+heart_diseasePlot
 
 #ever_married bar plot
 ever_marriedPlot <- ggplot(data = strokeData) + geom_bar(mapping = aes(x = ever_married))
@@ -68,4 +80,10 @@ avg_glucose_levelPlot
 #bmi plot
 bmiPlot <- ggplot(data = strokeData) + geom_histogram(mapping = aes(x = bmi), binwidth = 1)
 bmiPlot
+```
+
+```{r}
+#PAIRWISE COMPARISONS
+strokeDataNumeric <- subset(strokeData, select=c("age", "avg_glucose_level", "bmi"))
+pairs(strokeDataNumeric)
 ```
